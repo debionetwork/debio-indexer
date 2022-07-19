@@ -8,7 +8,6 @@ import {
   deleteCertification,
   Lab,
   queryCertificationById,
-  queryCertificationsByMultipleIds,
   queryLabById,
   registerLab,
   updateCertification,
@@ -19,15 +18,15 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiPromise } from '@polkadot/api';
-import { CommonModule } from '../../../../../src/common/common.module';
-import { ProcessEnvModule } from '../../../../../src/common/proxies/process-env/process-env.module';
-import { IndexerModule } from '../../../../../src/indexer/indexer.module';
-import { IndexerHandler } from '../../../../../src/indexer/indexer.handler';
-import { CertificationsCommandHandlers } from '../../../../../src/indexer/events/certifications';
-import { LabCommandHandlers } from '../../../../../src/indexer/events/labs';
-import { initializeApi } from '../../../polkadot-init';
-import { labDataMock } from '../../../../mock/models/labs/labs.mock';
-import { certificationDataMock } from '../../../../mock/models/certifications/certification-mock';
+import { CommonModule } from '../../../../src/common/common.module';
+import { ProcessEnvModule } from '../../../../src/common/proxies/process-env/process-env.module';
+import { IndexerModule } from '../../../../src/indexer/indexer.module';
+import { IndexerHandler } from '../../../../src/indexer/indexer.handler';
+import { CertificationsCommandHandlers } from '../../../../src/indexer/events/certifications';
+import { LabCommandHandlers } from '../../../../src/indexer/events/labs';
+import { initializeApi } from '../../polkadot-init';
+import { labDataMock } from '../../../mock/models/labs/labs.mock';
+import { certificationDataMock } from '../../../mock/models/certifications/certification-mock';
 
 describe('Certification Event', () => {
   let app: INestApplication;
@@ -38,14 +37,14 @@ describe('Certification Event', () => {
   let certification: Certification;
   let elasticsearchService: ElasticsearchService;
 
-  // global.console = {
-  //   ...console,
-  //   log: jest.fn(),
-  //   debug: jest.fn(),
-  //   info: jest.fn(),
-  //   warn: jest.fn(),
-  //   error: jest.fn(),
-  // };
+  global.console = {
+    ...console,
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  };
 
   class GoogleSecretManagerServiceMock {
     _secretsList = new Map<string, string>([
