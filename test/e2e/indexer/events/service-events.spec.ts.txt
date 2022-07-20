@@ -18,14 +18,14 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiPromise } from '@polkadot/api';
-import { initializeApi } from '../../../e2e/polkadot-init';
+import { initializeApi } from '../../polkadot-init';
 import { CommonModule, ProcessEnvModule } from '../../../../src/common';
 import { LabCommandHandlers } from '../../../../src/indexer/events/labs';
 import { ServiceCommandHandlers } from '../../../../src/indexer/events/services';
 import { IndexerHandler } from '../../../../src/indexer/indexer.handler';
 import { IndexerModule } from '../../../../src/indexer/indexer.module';
-import { labDataMock } from 'test/mock/models/labs/labs.mock';
-import { serviceDataMock } from 'test/mock/models/labs/services.mock';
+import { labDataMock } from '../../../mock/models/labs/labs.mock';
+import { serviceDataMock } from '../../../mock/models/labs/services.mock';
 
 describe('Service Event', () => {
   let app: INestApplication;
@@ -96,7 +96,6 @@ describe('Service Event', () => {
     const { info: labInfo } = labDataMock;
     const { info: serviceInfo, serviceFlow } = serviceDataMock;
 
-    await registerLab(api, pair, labInfo);
     await createService(api, pair, serviceInfo, serviceFlow);
 
     lab = await queryLabById(api, pair.address);
@@ -140,7 +139,7 @@ describe('Service Event', () => {
       serviceInfo.longDescription,
     );
     expect(serviceSource['info']['image']).toEqual(serviceInfo.image);
-  });
+  }, 25000);
 
   it('service updated event', async () => {
     const NAME_UPDATED = 'string2';
@@ -190,7 +189,7 @@ describe('Service Event', () => {
       serviceInfo.longDescription,
     );
     expect(serviceSource['info']['image']).toEqual(serviceInfo.image);
-  });
+  }, 25000);
 
   it('service deleted event', async () => {
     await deleteService(api, pair, service.id);
@@ -209,5 +208,5 @@ describe('Service Event', () => {
     });
 
     expect(serviceES.body.count).toEqual(0);
-  });
+  }, 25000);
 });
