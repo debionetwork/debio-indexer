@@ -21,9 +21,9 @@ class CustomSequencer extends Sequencer {
     }));
 
     // service
-    // sequence.push(...testsArray.filter(obj => {
-    //   return obj.path.includes('indexer/events/service-events.spec.ts');
-    // }));
+    sequence.push(...testsArray.filter(obj => {
+      return obj.path.includes('indexer/events/service-events.spec.ts');
+    }));
 
     return sequence;
   }

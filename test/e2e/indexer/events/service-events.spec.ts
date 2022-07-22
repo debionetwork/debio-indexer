@@ -8,7 +8,6 @@ import {
   Lab,
   queryLabById,
   queryServiceById,
-  registerLab,
   Service,
   updateService,
 } from '@debionetwork/polkadot-provider';
@@ -35,6 +34,15 @@ describe('Service Event', () => {
   let lab: Lab;
   let service: Service;
   let elasticsearchService: ElasticsearchService;
+
+  global.console = {
+    ...console,
+    log: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  };
 
   class GoogleSecretManagerServiceMock {
     _secretsList = new Map<string, string>([
@@ -96,10 +104,19 @@ describe('Service Event', () => {
     const { info: labInfo } = labDataMock;
     const { info: serviceInfo, serviceFlow } = serviceDataMock;
 
-    await createService(api, pair, serviceInfo, serviceFlow);
+    // eslint-disable-next-line
+    const servicePromise: Promise<Service> = new Promise((resolve, reject) => {
+      createService(api, pair, serviceInfo, serviceFlow, () => {
+        queryLabById(api, pair.address).then((lab) => {
+          queryServiceById(api, lab.services.at(-1)).then((res) => {
+            resolve(res);
+          });
+        });
+      });
+    });
 
+    service = await servicePromise;
     lab = await queryLabById(api, pair.address);
-    service = await queryServiceById(api, lab.services.at(-1));
 
     expect(lab.info).toEqual(labInfo);
     expect(service.info).toEqual(serviceInfo);
@@ -145,12 +162,26 @@ describe('Service Event', () => {
     const NAME_UPDATED = 'string2';
     const { info: serviceInfo, serviceFlow } = serviceDataMock;
 
-    await updateService(api, pair, service.id, {
-      ...serviceInfo,
-      name: NAME_UPDATED,
-    });
+    const serviceUpdatePromise: Promise<Service> = new Promise(
+      // eslint-disable-next-line
+      (resolve, reject) => {
+        updateService(
+          api,
+          pair,
+          service.id,
+          { ...serviceInfo, name: NAME_UPDATED },
+          () => {
+            queryLabById(api, pair.address).then((lab) => {
+              queryServiceById(api, lab.services.at(-1)).then((res) => {
+                resolve(res);
+              });
+            });
+          },
+        );
+      },
+    );
 
-    service = await queryServiceById(api, service.id);
+    service = await serviceUpdatePromise;
 
     expect(service.info).toEqual({ ...serviceInfo, name: NAME_UPDATED });
     expect(service.serviceFlow).toEqual(serviceFlow);
@@ -192,7 +223,20 @@ describe('Service Event', () => {
   }, 25000);
 
   it('service deleted event', async () => {
-    await deleteService(api, pair, service.id);
+    const serviceDeletePromise: Promise<number> = new Promise(
+      // eslint-disable-next-line
+      (resolve, reject) => {
+        deleteService(api, pair, service.id, () => {
+          queryLabById(api, pair.address).then((lab) => {
+            resolve(lab.services.length);
+          });
+        });
+      },
+    );
+
+    const countService = await serviceDeletePromise;
+
+    expect(countService).toEqual(0);
 
     const serviceES = await elasticsearchService.count({
       index: 'services',
