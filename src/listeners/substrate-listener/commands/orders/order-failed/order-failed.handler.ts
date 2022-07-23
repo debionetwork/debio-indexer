@@ -13,6 +13,7 @@ import {
   setOrderRefunded,
   finalizeRequest,
   sendRewards,
+  eventTypes,
 } from '@debionetwork/polkadot-provider';
 import { NotificationDto } from '../../../../../common/notification/dto/notification.dto';
 
@@ -57,14 +58,28 @@ export class OrderFailedHandler implements ICommandHandler<OrderFailedCommand> {
         order.id,
       );
 
+      const totalPrice = order.prices.reduce(
+        (acc, price) => acc + +price.value,
+        0,
+      );
+      const totalAdditionalPrice = order.additionalPrices.reduce(
+        (acc, price) => acc + +price.value,
+        0,
+      );
+      const amountToForward = totalPrice + totalAdditionalPrice;
+
       const currDateTime = this.dateTimeProxy.new();
+
+      const valueMessage =
+        eventTypes.role.lab.geneticTesting.DnaSampleQualityControlled
+          .value_message;
 
       // QC notification to lab
       const labNotification: NotificationDto = {
         role: 'Lab',
         entity_type: 'Genetic Testing Order',
         entity: 'Order Failed',
-        description: `You've received ${order.additionalPrices[0]} DAI as quality control fees for ${order.dnaSampleTrackingId}.`,
+        description: `${valueMessage}${amountToForward} DAI as quality control fees for ${order.dnaSampleTrackingId}.`,
         read: false,
         created_at: currDateTime,
         updated_at: currDateTime,

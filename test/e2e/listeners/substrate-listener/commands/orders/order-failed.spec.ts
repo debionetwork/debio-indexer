@@ -246,7 +246,7 @@ describe('Order Failed Integration Tests', () => {
     );
     expect(notifications[0].entity).toEqual('Order Failed');
     expect(
-      notifications[0].description.includes("You've received"),
+      notifications[0].description.includes('You’ve received'),
     ).toBeTruthy();
     expect(
       notifications[0].description.includes('DAI as quality control fees for'),

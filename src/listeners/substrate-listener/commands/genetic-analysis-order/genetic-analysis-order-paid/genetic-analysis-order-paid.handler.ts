@@ -60,7 +60,7 @@ export class GeneticAnalysisOrderPaidHandler
         role: 'GA',
         entity_type: 'Genetic Analyst',
         entity: 'New Order',
-        description: `A new order ${geneticAnalysisOrder.id} is awaiting process.`,
+        description: `A new order ${geneticAnalysisOrder.geneticAnalysisTrackingId} is awaiting process.`,
         read: false,
         created_at: currDateTime,
         updated_at: currDateTime,

@@ -3,6 +3,7 @@ import { DnaSampleResultReadyCommand } from './dna-sample-result-ready.command';
 import { NotificationDto } from '../../../../../common/notification/dto/notification.dto';
 import { DateTimeProxy, NotificationService } from '../../../../../common';
 import { Injectable } from '@nestjs/common';
+import { eventTypes } from '@debionetwork/polkadot-provider';
 
 @Injectable()
 @CommandHandler(DnaSampleResultReadyCommand)
@@ -20,11 +21,14 @@ export class DnaSampleResultReadyCommandHandler
 
     const currDateTime = this.dateTimeProxy.new();
 
+    const valueMessage =
+      eventTypes.role.customer.orders.OrderFulfilled.value_message;
+
     const testResultNotification: NotificationDto = {
       role: 'Customer',
       entity_type: 'Genetic Testing Tracking',
       entity: 'Order Fulfilled',
-      description: `Your test results for ${dnaSample.orderId} are out. Click here to see your order details.`,
+      description: `${valueMessage}${dnaSample.trackingId} are out. Click here to see your order details.`,
       read: false,
       created_at: currDateTime,
       updated_at: currDateTime,

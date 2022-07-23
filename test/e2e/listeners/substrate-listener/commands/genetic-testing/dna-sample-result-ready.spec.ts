@@ -232,7 +232,7 @@ describe('Data Staked Integration Tests', () => {
     expect(notifications[0].entity).toEqual('Order Fulfilled');
     expect(
       notifications[0].description.includes(
-        `Your test results for ${dnaSample.orderId} are out. Click here to see your order details.`,
+        `Your test results for ${dnaSample.trackingId} are out. Click here to see your order details.`,
       ),
     ).toBeTruthy();
 

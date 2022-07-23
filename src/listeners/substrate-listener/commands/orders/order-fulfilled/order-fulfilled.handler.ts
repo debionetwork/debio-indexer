@@ -206,7 +206,7 @@ export class OrderFulfilledHandler
         role: 'Lab',
         entity_type: 'Genetic Testing Order',
         entity: 'Order Fulfilled',
-        description: `You've received ${amountToForward} DAI for completeing the requested test for ${order.id}.`,
+        description: `You've received ${amountToForward} DAI for completeing the requested test for ${order.dnaSampleTrackingId}.`,
         read: false,
         created_at: currDateTime,
         updated_at: currDateTime,
