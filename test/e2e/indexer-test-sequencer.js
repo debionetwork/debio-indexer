@@ -7,21 +7,22 @@ class CustomSequencer extends Sequencer {
     const sequence = [];
     // service request
     sequence.push(...testsArray.filter(obj => {
-      return obj.path.includes('indexer/events/service-request/service-request-claimed.spec.ts');
+      return obj.path.includes('indexer/events/service-request-events.spec.ts');
     }));
 
     // labs
     sequence.push(...testsArray.filter(obj => {
-      return obj.path.includes('indexer/events/labs/lab-registered.spec.ts');
+      return obj.path.includes('indexer/events/labs-events.spec.ts');
     }));
+
+    // certification
     sequence.push(...testsArray.filter(obj => {
-      return obj.path.includes('indexer/events/labs/lab-update-verification-status.spec.ts');
+      return obj.path.includes('indexer/events/certification-events.spec.ts');
     }));
+
+    // service
     sequence.push(...testsArray.filter(obj => {
-      return obj.path.includes('indexer/events/labs/lab-updated.spec.ts');
-    }));
-    sequence.push(...testsArray.filter(obj => {
-      return obj.path.includes('indexer/events/labs/lab-deregistered.spec.ts');
+      return obj.path.includes('indexer/events/service-events.spec.ts');
     }));
 
     return sequence;

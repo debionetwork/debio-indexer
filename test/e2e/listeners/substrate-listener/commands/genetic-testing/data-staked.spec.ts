@@ -153,7 +153,6 @@ describe('Data Staked Integration Tests', () => {
     });
 
     const lab: Lab = await labPromise;
-    expect(lab.info).toEqual(labDataMock.info);
 
     // eslint-disable-next-line
     const servicePromise: Promise<Service> = new Promise((resolve, reject) => {
@@ -194,11 +193,6 @@ describe('Data Staked Integration Tests', () => {
     });
 
     const order: Order = await orderPromise;
-    expect(order.customerId).toEqual(pair.address);
-    expect(order.sellerId).toEqual(pair.address);
-    expect(order.serviceId).toEqual(service.id);
-    expect(order.customerBoxPublicKey).toEqual(lab.info.boxPublicKey);
-    expect(order.orderFlow).toEqual(serviceDataMock.serviceFlow);
 
     await submitTestResult(api, pair, order.dnaSampleTrackingId, {
       comments: 'comment',
@@ -226,9 +220,18 @@ describe('Data Staked Integration Tests', () => {
     );
 
     const stakedData = await submitDataBountyDetailsPromise;
-    expect(stakedData).toEqual(order.id);
 
     const stakedDataByOrderId = await queryStakedDataByOrderId(api, order.id);
+
+    expect(lab.info).toEqual(labDataMock.info);
+
+    expect(order.customerId).toEqual(pair.address);
+    expect(order.sellerId).toEqual(pair.address);
+    expect(order.serviceId).toEqual(service.id);
+    expect(order.customerBoxPublicKey).toEqual(lab.info.boxPublicKey);
+    expect(order.orderFlow).toEqual(serviceDataMock.serviceFlow);
+
+    expect(stakedData).toEqual(order.id);
     expect(stakedDataByOrderId).toEqual(order.id);
 
     const dbConnection = await createConnection({
